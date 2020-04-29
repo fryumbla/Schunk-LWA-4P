@@ -1,0 +1,11 @@
+moveit_setup_assistant_config:
+  URDF:
+    package: schunk_description
+    relative_path: urdf/lwa4p/lwa4p_inertia.urdf
+    xacro_args: ""
+  SRDF:
+    relative_path: config/arm.srdf
+  CONFIG:
+    author_name: Francisco Yumbla
+    author_email: fryumbla@espol.edu.ec
+    generated_timestamp: 1586664671

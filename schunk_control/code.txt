@@ -1,0 +1,6 @@
+
+test.cpp    position of the x y z and angles
+test1.cpp   cartesian path 
+
+
+set_schunk.cpp no es nada solo codigo de alguna parte
