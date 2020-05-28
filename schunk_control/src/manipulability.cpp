@@ -188,6 +188,12 @@ void initialize()
 
 }
 
+struct Point {
+     Point( double X, double Y ): x(X), y(Y) {};
+     double x;
+     double y;
+};//Simple Point structure
+
 
 int main(int argc, char **argv)
 {
@@ -200,6 +206,7 @@ int main(int argc, char **argv)
   visual_tools.reset(new rviz_visual_tools::RvizVisualTools("base_link","/rviz_visual_tools"));
   visual_tools->loadMarkerPub();
 
+
   // Clear messages
   visual_tools->deleteAllMarkers();
   visual_tools->enableBatchPublishing();
@@ -211,19 +218,33 @@ int main(int argc, char **argv)
   // geometry_msgs::Pose eef_pose;
   // tf::poseEigenToMsg(eef_state, eef_pose);
   // cout << eef_pose << "\n";
-
-  double step=0.03;
-  double sizex= 0.6245, sizey=0.6245/2, sizez=0.9205/2;
+  double radius = 0.03;
+  const double PI = 3.14159;
+  Point Center(0.290748232603,0);
+  std::vector<Point> points;
   
-  for (double i = 0.2; i < sizex; i=i+step)
+  for(double angle=0; angle<=2*PI; angle+=0.3)
   {
-    for (double j = -sizey; j < sizey; j=j+step)
-    {
+    points.push_back(Point( Center.x + radius*cos( angle ), Center.y + radius*sin( angle ) ));
+    // Point( Center.x + radius*cos( angle ), Center.y + radius*sin( angle ) );
+  }
+
+  for (double i = 0; i < points.size(); i++)
+  {
+      cout << points.at(i).x << " " <<points.at(i).y << "\n";
+  }
+  
+
+  double step=0.01;
+  double sizex= 0.6245, sizey=0.6245/2, sizez=0.801787078381/2;
+  
+  for (double i = 0; i < points.size(); i++)
+  {
       for (double k = sizez; k < sizez*2; k=k+step)
       {
         geometry_msgs::Pose pose_right, pose_left;
-        pose_right = create_pose(i,j,k,0,-3.141592654/2,3*3.141592654/4);
-        pose_left = create_pose(i,j,k,0,-3.141592654/2,-3*3.141592654/4);
+        pose_right = create_pose(points.at(i).x,points.at(i).y,k,0,-3.141592654/2,3*3.141592654/4);
+        pose_left = create_pose(points.at(i).x,points.at(i).y,k,0,-3.141592654/2,-3*3.141592654/4);
 
         if (getIK_right(pose_right))
         {
@@ -307,11 +328,7 @@ int main(int argc, char **argv)
         }
 
       }
-      
-    }
-     
-
-
+   
   }
   
     

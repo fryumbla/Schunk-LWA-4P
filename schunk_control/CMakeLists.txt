@@ -159,7 +159,8 @@ include_directories(
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-add_executable(social_robot_manipulability src/manipulabilitytime.cpp)
+add_executable(social_robot_manipulability src/manipulability.cpp)
+add_executable(objects src/object.cpp)
 add_executable(fran src/color.cpp)
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -170,9 +171,14 @@ add_executable(fran src/color.cpp)
 ## Add cmake target dependencies of the executable
 ## same as for the library above
 add_dependencies(social_robot_manipulability social_robot_manipulability_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(objects social_robot_manipulability_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(fran social_robot_manipulability_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
 ## Specify libraries to link a library or executable target against
 target_link_libraries(social_robot_manipulability
+   ${catkin_LIBRARIES}
+)
+target_link_libraries(objects
    ${catkin_LIBRARIES}
 )
 target_link_libraries(fran
