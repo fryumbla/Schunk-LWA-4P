@@ -1,6 +1,4 @@
-extern "C" {
-    #include "/home/francisco/schunk_ws/src/Schunk-LWA-4P/schunk_vrep/remoteApi/extApi.h"
-}
+#include "../remoteApi/extApi.h"
 #include <iostream>
 #include <string>
 #include <ros/ros.h>
@@ -22,7 +20,6 @@ int found(int a,char* b,int c,int d)
     return c;
     cout << "joint " << d << " found"  << std::endl;
   }
-
 }
 
 void joint_callback(const sensor_msgs::JointState& data)
@@ -30,14 +27,22 @@ void joint_callback(const sensor_msgs::JointState& data)
   pub_msg.name=data.name;
   pub_msg.position = data.position;
 
-  char* joints[6]={"arm_1_joint","arm_2_joint","arm_3_joint","arm_4_joint","arm_5_joint","arm_6_joint"};
-  
-  int joint_handle[6]={0,0,0,0,0,0};
+  std::vector<char*> joints;
+  for (int i=0;i<data.name.size(); ++i){
+    char *cstr = new char[data.name.at(i).length() + 1];
+    strcpy(cstr, data.name.at(i).c_str());
+    joints.push_back(cstr);
+  }
 
-  for (int i=0;i<=5; ++i){
+  std::vector<int> joint_handle;
+  for (int i = 0; i < data.name.size(); i++)
+  {
+    joint_handle.push_back(0);
+  }
+  for (int i=0;i<data.name.size(); ++i){
     joint_handle[i]=found(clientID,joints[i],joint_handle[i],i+1);
   }
-  for (int i=0;i<=5; ++i){
+  for (int i=0;i<data.name.size(); ++i){
     simxSetJointTargetPosition(clientID, (simxInt) joint_handle[i], data.position.at(i), simx_opmode_oneshot);
   }
 
@@ -52,7 +57,7 @@ int main(int argc, char **argv)
   
   if (clientID!=-1)
   {
-    cout << "Servidor conectado!" << std::endl;
+    cout << "Server conected!" << std::endl;
     
     ros::init(argc, argv, "vrep_communication");
     ros::NodeHandle nh = ros::NodeHandle();
@@ -65,10 +70,10 @@ int main(int argc, char **argv)
 
     ros::spin();
     simxFinish(clientID); // fechando conexao com o servidor
-    cout << "Conexao fechada!" << std::endl;
+    cout << "Connection over!" << std::endl;
   }
   else
-    cout << "Problemas para conectar con servidor!" << std::endl;
+    cout << "Server connector problem!" << std::endl;
   return 0;
 }
 
